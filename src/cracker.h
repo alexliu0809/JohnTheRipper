@@ -32,6 +32,7 @@ extern void crk_init(struct db_main *db, void (*fix_state)(void),
  * event_abort flag can be used to find out which of these has happened).
  */
 extern int crk_process_key(char *key);
+extern int alex_crk_process_key(char *key, char *original);
 
 /*
  * Resets the guessed keys buffer and processes all the buffered keys for

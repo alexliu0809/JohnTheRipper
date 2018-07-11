@@ -21,6 +21,12 @@
 #include "memory.h"
 #endif
 
+/*
+#ifndef ALEX_DEBUG
+#define ALEX_DEBUG
+#endif
+*/
+ 
 #ifndef MAX
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #endif

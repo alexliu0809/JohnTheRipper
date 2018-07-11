@@ -324,6 +324,9 @@ static int single_process_buffer(struct db_salt *salt)
 static int single_process_pw(struct db_salt *salt, struct db_password *pw,
 	char *rule)
 {
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "Single");
+	#endif
 	struct list_entry *first, *second;
 	struct list_entry *global_head = single_seed->head;
 	int first_global, second_global;

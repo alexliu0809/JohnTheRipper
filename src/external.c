@@ -307,6 +307,9 @@ void ext_init(char *mode, struct db_main *db)
 
 int ext_filter_body(char *in, char *out)
 {
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "ext_filter");
+	#endif
 	unsigned char *internal;
 	c_int *external;
 
@@ -364,6 +367,9 @@ int ext_filter_body(char *in, char *out)
 
 		out[maxlen] = 0;
 	}
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "ext_filter ends");
+	#endif
 	return 1;
 }
 

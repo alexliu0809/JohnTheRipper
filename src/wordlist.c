@@ -1212,6 +1212,9 @@ REDO_AFTER_LMLOOP:
 				}
 			}
 			loop_line_no++;
+			#ifdef ALEX_DEBUG
+			printf("%s\n", "wordlist apply 1");
+			#endif
 			if ((word = apply(joined->data, rule, -1, last))) {
 				last = word;
 #if HAVE_REXGEN
@@ -1263,6 +1266,9 @@ REDO_AFTER_LMLOOP:
 
 		else if (rule && nWordFileLines)
 		while (line_number < nWordFileLines) {
+			#ifdef ALEX_DEBUG
+			printf("%s\n", "start of loop");
+			#endif
 			if (options.node_count && !myWordFileLines)
 			if (!dist_rules) {
 				int for_node = line_number %
@@ -1281,10 +1287,20 @@ REDO_AFTER_LMLOOP:
 #endif
 			clean_bom(line);
 
-			line_number++;
+			char original[LINE_BUFFER_SIZE];
+			memset(original,0,sizeof(original));
+			strcpy(original,line);
 
+			line_number++;
+			#ifdef ALEX_DEBUG
+			printf("%s\n", "wordlist apply 2");
+			printf("Before : %s\n", line);
+			#endif
 			if ((word = apply(line, rule, -1, last))) {
 				last = word;
+				#ifdef ALEX_DEBUG
+				printf("After : %s\n", last);
+				#endif
 #if HAVE_REXGEN
 				if (regex) {
 					if (do_regex_hybrid_crack(db, regex,
@@ -1300,6 +1316,9 @@ REDO_AFTER_LMLOOP:
 					wordlist_hybrid_fix_state();
 				} else
 #endif
+				#ifdef ALEX_DEBUG
+				printf("%s\n", "wordlist apply 2.1");
+				#endif
 				if (f_new) {
 					if (do_external_hybrid_crack(db, word))
 					{
@@ -1310,6 +1329,9 @@ REDO_AFTER_LMLOOP:
 					}
 					wordlist_hybrid_fix_state();
 				} else
+				#ifdef ALEX_DEBUG
+				printf("%s\n", "wordlist apply 2.2");
+				#endif
 				if (options.mask) {
 					if (do_mask_crack(word)) {
 						rule = NULL;
@@ -1319,14 +1341,19 @@ REDO_AFTER_LMLOOP:
 					}
 				} else
 				if (ext_filter(word))
-				if (crk_process_key(word)) {
+				if (alex_crk_process_key(word,original)) {
+					#ifdef ALEX_DEBUG
+					printf("%s\n", "wordlist apply 2.3");
+					#endif
 					rules = 0;
 					pipe_input = 0;
 					break;
 				}
 			}
+		#ifdef ALEX_DEBUG
+		printf("%s\n", "end of loop");
+		#endif
 		}
-
 		else if (rule)
 		while (mem_map ? mgetl(line) :
 		       fgetl(line, LINE_BUFFER_SIZE, word_file)) {
@@ -1357,7 +1384,9 @@ process_word:
 					if (!strcmp(line, last))
 						goto next_word;
 				}
-
+				#ifdef ALEX_DEBUG
+				printf("%s\n", "Wordlist Apply 3");
+				#endif
 				if ((word = apply(line, rule, -1, last))) {
 					if (rules)
 						last = word;

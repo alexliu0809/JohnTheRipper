@@ -2277,7 +2277,9 @@ void do_prince_crack(struct db_main *db, char *wordlist, int rules)
               if ((rule = rule_list->head))
               do {
                 char *word;
-
+                #ifdef ALEX_DEBUG
+                printf("%s\n", "PP");
+                #endif
                 if ((word = rules_apply(pw_buf, rule->data, -1, last))) {
                   last = word;
 #if HAVE_REXGEN

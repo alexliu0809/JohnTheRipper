@@ -1008,8 +1008,11 @@ static int crk_salt_loop(void)
 	return ext_abort;
 }
 
-int crk_process_key(char *key)
+int alex_crk_process_key(char *key, char *original)
 {
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "crk_process_key");
+	#endif
 	if (crk_db->loaded) {
 		if (crk_key_index == 0)
 			crk_methods.clear_keys();
@@ -1020,7 +1023,9 @@ int crk_process_key(char *key)
 		    (options.force_maxkeys &&
 		     crk_key_index >= options.force_maxkeys))
 			return crk_salt_loop();
-
+		#ifdef ALEX_DEBUG
+		printf("%s\n", "crk_process_key 1");
+		#endif
 		return 0;
 	}
 
@@ -1029,12 +1034,30 @@ int crk_process_key(char *key)
 #endif
 
 	if (event_pending)
-	if (crk_process_event()) return 1;
+	if (crk_process_event())
+	{
+		#ifdef ALEX_DEBUG
+		printf("%s\n", "crk_process_key 2");
+		#endif
+		return 1;
+	}
 
 	strnzcpy(crk_stdout_key, key, crk_params.plaintext_length + 1);
 	if (options.verbosity > 1)
-		puts(crk_stdout_key);
+	{
+		#ifdef ALEX_DEBUG
+		printf("Puts: %s\n", crk_stdout_key);
+		#endif
+		
+		//--STDOUT outputs data
+		printf("%s\t%s\n", crk_stdout_key, original);
+		//puts(crk_stdout_key);
 
+
+		#ifdef ALEX_DEBUG
+		printf("Puts %s\n", "END");
+		#endif
+	}
 	status_update_cands(1);
 
 	if (john_max_cands && !event_abort) {
@@ -1058,7 +1081,87 @@ int crk_process_key(char *key)
 		event_status = 0;
 		status_print();
 	}
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "crk_process_key 3");
+	#endif
+	return ext_abort;
+}
 
+int crk_process_key(char *key)
+{
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "crk_process_key");
+	#endif
+	if (crk_db->loaded) {
+		if (crk_key_index == 0)
+			crk_methods.clear_keys();
+
+		crk_methods.set_key(key, crk_key_index++);
+
+		if (crk_key_index >= crk_params.max_keys_per_crypt ||
+		    (options.force_maxkeys &&
+		     crk_key_index >= options.force_maxkeys))
+			return crk_salt_loop();
+		#ifdef ALEX_DEBUG
+		printf("%s\n", "crk_process_key 1");
+		#endif
+		return 0;
+	}
+
+#if !OS_TIMER
+	sig_timer_emu_tick();
+#endif
+
+	if (event_pending)
+	if (crk_process_event())
+	{
+		#ifdef ALEX_DEBUG
+		printf("%s\n", "crk_process_key 2");
+		#endif
+		return 1;
+	}
+
+	strnzcpy(crk_stdout_key, key, crk_params.plaintext_length + 1);
+	if (options.verbosity > 1)
+	{
+		#ifdef ALEX_DEBUG
+		printf("Puts: %s\n", crk_stdout_key);
+		#endif
+		
+		//--STDOUT outputs data
+		puts(crk_stdout_key);
+
+
+		#ifdef ALEX_DEBUG
+		printf("Puts %s\n", "END");
+		#endif
+	}
+	status_update_cands(1);
+
+	if (john_max_cands && !event_abort) {
+		unsigned long long cands =
+			((unsigned long long)
+			 status.cands.hi << 32) + status.cands.lo;
+		if (cands >= john_max_cands)
+			event_abort = event_pending = 1;
+	}
+
+	if (options.flags & FLG_MASK_STACKED)
+		mask_fix_state();
+	else
+	crk_fix_state();
+
+	if (ext_abort)
+		event_abort = 1;
+
+	if (ext_status && !event_abort) {
+		ext_status = 0;
+		event_status = 0;
+		status_print();
+	}
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "crk_process_key 3");
+	#endif
 	return ext_abort;
 }
 

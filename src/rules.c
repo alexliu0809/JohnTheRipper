@@ -1254,6 +1254,9 @@ accept:
 
 char *rules_apply(char *word_in, char *rule, int split, char *last)
 {
+	#ifdef ALEX_DEBUG
+	printf("%s\n", "Rules Applied");
+	#endif
 	char cpword[PLAINTEXT_BUFFER_SIZE + 1];
 	char *word;
 	char *in, *alt, *memory;
