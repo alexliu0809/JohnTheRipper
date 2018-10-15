@@ -2200,17 +2200,40 @@ out_OK:
 	}
 
 	if (last) {
+		#ifdef ALEX_DEBUG
+		printf("%s\n", "rules_apply last_1");
+		#endif
 		if (length > rules_max_length)
 			length = rules_max_length;
 		if (length >= ARCH_SIZE - 1) {
+			#ifdef ALEX_DEBUG
+			printf("%s\n", "rules_apply last_2");
+			#endif
+
+			/* alex's modification */
+			return in;
+			/*
 			if (*(ARCH_WORD *)in != *(ARCH_WORD *)last)
 				return in;
 			if (strcmp(&in[ARCH_SIZE - 1], &last[ARCH_SIZE - 1]))
 				return in;
 			return NULL;
+			*/
+		}
+		else{
+			#ifdef ALEX_DEBUG
+			printf("%s\n", "rules_apply last_3");
+			#endif
 		}
 		if (last[length])
+		{
 			return in;
+		}
+		else{
+			#ifdef ALEX_DEBUG
+			printf("%s\n", "rules_apply last_4");
+			#endif
+		}
 
 		/* Alex's modification */
 		//if (memcmp(in, last, length))
