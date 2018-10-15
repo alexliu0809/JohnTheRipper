@@ -1255,7 +1255,7 @@ accept:
 char *rules_apply(char *word_in, char *rule, int split, char *last)
 {
 	#ifdef ALEX_DEBUG
-	printf("%s\n", "Rules Applied");
+	printf("%s\n", "rules_apply started");
 	#endif
 	char cpword[PLAINTEXT_BUFFER_SIZE + 1];
 	char *word;
@@ -2211,9 +2211,13 @@ out_OK:
 		}
 		if (last[length])
 			return in;
-		if (memcmp(in, last, length))
-			return in;
-		return NULL;
+
+		/* Alex's modification */
+		//if (memcmp(in, last, length))
+			//return in;
+		//return NULL;
+
+		return in;
 	}
 	return in;
 
