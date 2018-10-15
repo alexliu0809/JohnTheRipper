@@ -84,3 +84,5 @@ src/version.h.new
 src/restore_tester_fmt_plug.c
 
 test/
+
+run/
